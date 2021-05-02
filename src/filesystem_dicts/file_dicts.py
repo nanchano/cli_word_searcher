@@ -1,17 +1,21 @@
+import ntpath
+from os import listdir
+from os.path import isfile, join, splitext
 from collections.abc import MutableMapping
-from parser.parser import Parser
+from parsing.parser import Parser
 
 class FileDict(MutableMapping):
-    """A collection of contents corresponding to a specific file inside a directory."""
-    def __init__(self, dir_name: str) -> None:
+    """A collection of contents corresponding to a specific file."""
+    def __init__(self, full_path: str) -> None:
         """
         Initializes the class.
         Args:
             dir_name (str): directory name where the file is housed.
         """
-        self.dir_name = dir_name
+        self.full_path = full_path
+        #self.dir_name, self.file_name = ntpath.split(self.full_path)
         self.data = {}
-        self.parser = Parser(self.dir_name)
+        self.parser = Parser(self.full_path)
         
     def __setitem__(self, key: str, value: str) -> None:
         """
@@ -51,9 +55,24 @@ class FileDict(MutableMapping):
         return f'FileDict{tuple(self.data.items())}'
 
 
-class DirDict(FileDict):
+class DirDict(object):
+    """A collection of contents of each file for a specific directory"""
 
-    def __init__(self, dir_name) -> None:
-        super(DirDict, self).__init__(dir_name)
+    def __init__(self, dir_name: str) -> None:
+        self.dir_name = dir_name
+        self.files = self.get_files_from_dir()
+        self.file_dict = FileDict(self.dir_name)
 
+    def get_files_from_dir(self) -> list:
+        files = [f for f in listdir(self.dir_name) if isfile(join(self.dir_name, f))]
+    
+        return files
 
+    def load_files(self) -> dict:
+        for file in self.files:
+            full_path = self.dir_name + file
+            name, extension = splitext(file)
+            self.file_dict[name] = full_path #parses full path and saves file content
+
+        return self.file_dict.data
+            
