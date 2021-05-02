@@ -3,29 +3,54 @@ from PyInquirer import prompt
 from examples import custom_style_2
 from counting.counter import WordCounter
 from filesystem_dicts.file_dicts import *
-
+from prompt_toolkit.validation import Validator, ValidationError
 
 class App(object):
 
-    QUESTIONS = [
+    START_QUESTION = [
+        {
+            'type': 'list',
+            'name': 'start_options',
+            'message': 'Select an option.',
+            'choices': ['Search', 'Help', 'Exit'],
+        }
+    ]
 
+    QUESTIONS = [
         {
             'type': 'input',
             'name': 'directory_choice',
             'message': 'Enter a directory.',
-            'validate': lambda s: isdir(s) or 'Must enter a valid directory'
+            'validate': lambda s: isdir(s) or 'Directory does not exist. Must enter a valid directory'
         }, 
-
         {
             'type': 'input',
             'name': 'words_choice',
-            'message': 'Enter words to search'
+            'message': 'Enter words to search.'
         }
 
     ]
 
+    def _print_help(self):
+        msg = '''A CLI tool that searches words inside the files on a given directory and ranks them based on their presence ratio, returning a list of the top 10 files that contain the most words.'''
+        print(msg)
+
+        return
+
+    def _eval_start_options(self):
+        ans = prompt(self.START_QUESTION, style=custom_style_2).get('start_options')
+
+        if ans == 'Exit':
+            exit()
+        elif ans == 'Help':
+            self._print_help()
+        else:
+            return
+
+
     def get_answers(self):
         self.answers = prompt(self.QUESTIONS, style=custom_style_2)
+
         self.chosen_dir = self.answers.get('directory_choice')
         self.chosen_words = self.answers.get('words_choice')
 
@@ -46,6 +71,9 @@ class App(object):
 
     def run(self):
         print('welcome to the CLI word searcher!')
+
+        self._eval_start_options()
+
         self.chosen_dir, self.chosen_words = self.get_answers()
         
         self.data = self.get_dir_data(self.chosen_dir)
