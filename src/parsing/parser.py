@@ -71,9 +71,3 @@ class Parser(object):
             bool.
         """
         return os.path.isdir(dir_)
-
-if __name__ == '__main__':
-    #parser = Parser('../../inputs/doesntexist.txt')
-    parser = Parser('../inputs/hamlet_TXT_FolgerShakespeare.txt')
-    data = parser.parse()
-    print(random.sample(data, 10))
