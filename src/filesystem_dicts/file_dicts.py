@@ -59,20 +59,34 @@ class DirDict(object):
     """A collection of contents of each file for a specific directory"""
 
     def __init__(self, dir_name: str) -> None:
+        """Initializes the class.
+        Args:
+            dir_name (str): directory name
+        """
         self.dir_name = dir_name
+        if self.dir_name[-1] != '/':
+            self.dir_name += '/'
+
         self.files = self.get_files_from_dir()
         self.file_dict = FileDict(self.dir_name)
 
     def get_files_from_dir(self) -> list:
+        """Saves all files from a given directory.
+        Returns:
+            list
+        """
         files = [f for f in listdir(self.dir_name) if isfile(join(self.dir_name, f))]
-    
+        
         return files
 
     def load_files(self) -> dict:
+        """Loads each file contents into a dictionary.
+        Returns:
+            dict
+        """
         for file in self.files:
-            full_path = self.dir_name + file
             name, extension = splitext(file)
-            self.file_dict[name] = full_path #parses full path and saves file content
+            self.file_dict[name] = file #parses full path and saves file content
 
         return self.file_dict.data
             
