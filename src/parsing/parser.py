@@ -24,10 +24,10 @@ class Parser(object):
         """
         if file_ is not None:
             self.file_name = file_
-            self.full_path = self.dir_name + '/' + self.file_name
+            self.full_path = os.path.join(self.dir_name, self.file_name)
 
         if not self._file_exists(self.full_path):
-            raise FileNotFoundError('No file named {} in {} directory'.format(self.file_name, self.dir_name))
+            raise FileNotFoundError('No such file or directory: {}'.format(self.full_path))
 
         with open(self.full_path) as f:
             # keeping only alphanumerical characters here
@@ -47,8 +47,10 @@ class Parser(object):
             print('Directory does not exist. Creating it...')
             os.makedirs(output_dir)
 
+        set_as_str = ', '.join(self.data)
+
         with open(output_path, 'w') as f:
-            f.write(self.data)
+            f.write(set_as_str)
 
         return
 
