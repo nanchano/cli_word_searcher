@@ -1,9 +1,8 @@
 from os.path import isdir
 from PyInquirer import prompt
 from examples import custom_style_2
-from counting.counter import WordCounter
-from filesystem_dicts.file_dicts import *
-from prompt_toolkit.validation import Validator, ValidationError
+from counting.wordcounter import WordCounter
+from filesystem_dicts.fsdicts import *
 
 class App(object):
     """CLI Application."""
